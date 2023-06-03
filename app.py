@@ -1,13 +1,13 @@
-import os
 import telebot
 from dotenv import load_dotenv, find_dotenv
+from telebot import formatting
 from telebot.types import BotCommand
 import concurrent.futures
-from flask import Flask
-from flask import request
-from flask import Response
+from flask import Flask, request
+import os
 from waitress import serve
 import requests
+import json
 from revChatGPT.V3 import Chatbot
 
 main = Flask(__name__)
@@ -38,7 +38,7 @@ bot.set_my_commands(commands=[
 ])
 
 
-@bot.message_handler(commands='start')
+@bot.message_handler(commands=['start'])
 def welcome(message):
   bot.send_chat_action(message.chat.id, "typing")
   bot.reply_to(
@@ -79,3 +79,4 @@ for t in results:
 if __name__ == '__main__':
   print('🟢 BOT IS ONLINE')
   bot.set_webhook(url=f'{host_url}/{telegram_token}')
+  serve(main, host='0.0.0.0', port=int(os.environ.get('PORT', 6100)))
