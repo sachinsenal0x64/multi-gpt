@@ -65,7 +65,7 @@ def chat_gpt(message):
     info = f"✅ Process Complete...\n\n{output} "
     bot.edit_message_text(chat_id=message.chat.id,
                           message_id=msg.message_id,
-                          text=info)
+                          text=info,parse_mode="Markdown")
     gpt_chats.clear()
 
 
