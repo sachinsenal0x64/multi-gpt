@@ -26,9 +26,7 @@ start_time = time.time()
 @main.route(f'/{telegram_token}', methods=['POST'])
 def handle_telegram_webhook():
   update = telebot.types.Update.de_json(request.stream.read().decode('utf-8'))
-  if update.message and update.message.text:
-    print(update.message.chat.id)
-    bot.process_new_messages([update.message])
+  bot.process_new_messages([update.message])
   return 'OK', 201
 
 
