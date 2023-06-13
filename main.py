@@ -122,8 +122,6 @@ functions = [welcome, chat_gpt]
 with concurrent.futures.ThreadPoolExecutor() as executor:
   results = executor.map(lambda func: func, functions)
 
-for t in results:
-  print(t)
 
 if __name__ == '__main__':
   print('🟢 BOT IS ONLINE')
