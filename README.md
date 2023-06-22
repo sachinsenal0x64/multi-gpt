@@ -19,6 +19,7 @@
 
 - 🍕 You Can Use Without Any Offical API Keys
 - 🆓 Fully Free And Open Source
+- 🧰 All in One Place
   
 
 <br>
