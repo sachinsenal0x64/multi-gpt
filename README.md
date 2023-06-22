@@ -26,7 +26,7 @@
 
 ## 👎 Cons
 
-- 🐌 Slowly Develop Progress
+- 🐌 Slowly Develop
 
 
 <br>
