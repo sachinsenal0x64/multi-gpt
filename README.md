@@ -2,7 +2,8 @@
 
 ## 🚀 Features
 
--  🤖 GPT PLUS 
+-  🤖 GPT PLUS
+-  💡 CUSTOM GPT MODES (🔓 Jailbreak)
 -  🎨 DALLE 2 
 -  🌟 BARD
 -  🍪 MULTI ACCOUNT 
@@ -11,4 +12,4 @@
 
 
  
-# ⏳ Coming Soon....
+# ⏳ Coming Soon...
