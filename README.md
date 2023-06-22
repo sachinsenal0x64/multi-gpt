@@ -8,9 +8,9 @@
 -  🌟 BARD
 -  🍪 MULTI ACCOUNT
 -  ⚡️ MULTI THREADING
--  🤖 GPT 4 (Working On That)
--  🌐 INTERNET ACCESS (Working On That)
--  🔊 VOICE (Working On That)
+-  🤖 GPT 4 (⭕ in progress)
+-  🌐 INTERNET ACCESS (⭕ in progress)
+-  🔊 VOICE (⭕ in progress)
 
 
 ## 💡 Pros
