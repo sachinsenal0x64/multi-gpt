@@ -15,7 +15,7 @@
 
 ## 💡 Pros
 
-- 🍕 You can use without any offical API keys
+- 🍕 You Can Use Without Any Offical API Keys
 - 🆓 Fully Free And Open Source
 
 
