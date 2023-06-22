@@ -19,6 +19,11 @@
 - 🆓 Fully Free And Open Source
 
 
+## 👎 Cons
+
+- 🐌 Slowly Develop Progress
+
+
 <br>
  
 ## ⏳ Coming Soon...
