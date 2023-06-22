@@ -10,6 +10,14 @@
 -  ⚡️ MULTI THREADING
 -  🤖 GPT 4 (Working On That)
 -  🌐 INTERNET ACCESS (Working On That)
+-  🔊 VOICE (Working On That)
+
+
+## 💡 Pros
+
+- 🍕 You can use without any offical API keys
+- 🆓 Fully Free And Open Source
+
 
 <br>
  
