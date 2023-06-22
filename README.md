@@ -2,7 +2,7 @@
 
 ##  🚀 Features
 
--  🤖 GPT PLUS
+-  🤖 GPT PLUS (3.5-Turbo)
 -  💡 CUSTOM GPT MODES (🔓 Jailbreak)
 -  🎨 DALLE 2 
 -  🌟 BARD
