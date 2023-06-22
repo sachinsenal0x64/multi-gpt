@@ -8,7 +8,7 @@
 -  🌟 BARD
 -  🍪 MULTI ACCOUNT 
 -  🤖 GPT 4 (Working On That)
--  🌐 Internet access for searches and information gathering (Working On That)
+-  🌐 INTERNET ACCESS (Working On That)
 
 
  
