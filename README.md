@@ -31,4 +31,4 @@
 
 <br>
  
-## ⏳ Coming Soon...
+## 🏮 Some Features are Still in Development :)
