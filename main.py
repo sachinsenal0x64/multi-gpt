@@ -489,7 +489,7 @@ def cha_gpt(message):
           "role":
           "assistant",
           "content":
-          f'(based on my previous questions: {last_input}, and your previous answers:{last_output} if i ask any of my previous questions {last_input} you want to provide answers compare with your {last_output})',
+          f'(based on my previous question: {last_input}, and your previous answer: {last_output})',
         })
 
       response = requests.post(url, headers=headers, json=data)
