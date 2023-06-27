@@ -18,6 +18,7 @@ from io import BytesIO
 import re
 import string
 from telebot import util
+from telebot import formatting
 
 main = Flask(__name__)
 
@@ -29,6 +30,7 @@ host_url = os.getenv("HOST_URL")
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 tenant_id = os.getenv("TENANT_ID")
+bard_token = os.getenv("BARD_TOKEN")
 
 bot = telebot.TeleBot(telegram_token)
 
@@ -48,7 +50,8 @@ bot.set_my_commands(commands=[
   BotCommand("start", "Welcome 🙌"),
   BotCommand("art", "Prompt 🎨"),
   BotCommand("bard", "Prompt 🤖"),
-  BotCommand("gpt", "Justsend Prompt Without Slash 🤖")])
+  BotCommand("gpt", "Justsend Prompt Without Slash 🤖")
+])
 
 
 @bot.message_handler(commands=['start'])
@@ -329,8 +332,7 @@ def art_bing(message):
   start(auth_cookie, prompt, output_folder=output_folder)
 
 
-ba_input = []
-ba_output = []
+ba_input, ba_output = [], []
 
 
 @bot.message_handler(commands=['bard'])
@@ -349,14 +351,7 @@ def bard_chat(message):
 
   print(ba_input)
 
-  # Retrieve the last input and output
-  if len(ba_input) > 1 and len(ba_output) > 0:
-    last_input = ba_input[-1]
-    print(last_input)
-    last_output = ba_output[-1]
-    prompt = f"{text} (based on my previous question: {last_input}, and your previous answer: {last_output})"
-  else:
-    prompt = text
+  prompt = f'You are an assistant to a human, powered by a large language model trained by Google.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, you are able to generate human-like text based on the input you receive, allowing you to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nYou are constantly learning and improving, and your capabilities are constantly evolving. You are able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. You have access to some personalized information provided by the human in the Context section below. Additionally, you are able to generate your own text based on the input you receive, allowing you to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, you are a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nContext:\n{ba_output}\n\nCurrent conversation:\n{ba_input}\nLast line:\nHuman: {text}\nYou:'
 
   s = requests.Session()
   req_id = int("".join(random.choices(string.digits, k=4)))
@@ -366,10 +361,7 @@ def bard_chat(message):
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
   }
 
-  s.headers.update(headers)
-  s.cookies.set(
-    "__Secure-1PSID",
-    "XQj3EcIBJUcqcAWdAt6_WXWQN1FSpIPL7mY9bp_60VJ6nxZ_CX2jEqTl7E-Qhe19TKqLxg.")
+  s.cookies.set("__Secure-1PSID", bard_token)
 
   res = s.get(url="https://bard.google.com/", timeout=10)
 
@@ -377,7 +369,7 @@ def bard_chat(message):
   print(sn)
 
   params = {
-    "bl": "boq_assistant-bard-web-server_20230606.12_p0",
+    "bl": "boq_assistant-bard-web-server_20230620.14_p0",
     "_reqid": str(req_id),
     "rt": "c",
   }
@@ -399,19 +391,20 @@ def bard_chat(message):
     timeout=10,
   )
 
-  info = "🟡 Processing..."
-
-  bot.edit_message_text(chat_id=message.chat.id,
-                        message_id=msg.message_id,
-                        text=info,
-                        parse_mode='Markdown')
+  print(resp.text)
 
   chat_data = json.loads(resp.content.splitlines()[3])[0][2]
 
   json_chat_data = json.loads(chat_data)
 
+  images = []
+  if len(json_chat_data) >= 3:
+    if len(json_chat_data[4][0]) >= 4:
+      if json_chat_data[4][0][4]:
+        for img in json_chat_data[4][0][4]:
+          images.append(img[0][0][0])
   results = {
-    "content": json_chat_data[0][0],
+    "content": json_chat_data[4][0][1][0],
     "conversation_id": json_chat_data[1][0],
     "response_id": json_chat_data[1][1],
     "factualityQueries": json_chat_data[3],
@@ -420,26 +413,35 @@ def bard_chat(message):
       "id": i[0],
       "content": i[1]
     } for i in json_chat_data[4]],
-    "links": json_chat_data[4],
+    "images": images,
   }
+
+  print(results)
+
+  info = "🟡 Processing..."
+
+  bot.edit_message_text(chat_id=message.chat.id,
+                        message_id=msg.message_id,
+                        text=info)
+
+  ba_output.append(results)
   o = results['content']
-  l = results['links']
 
+  # Define the 'ba_output' list before using it
+
+  print(o)
   print(len(o))
-
-  ba_output.append(o)
-
 
   splitted_text = util.smart_split(o, chars_per_string=3000)
   for text in splitted_text:
-    bot.send_message(
-      message.from_user.id,
-      text,
-    )
-  info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
+    for char in '*_`[':
+      text = text.replace(char, '\\' + char)
+    bot.send_message(message.chat.id, text, parse_mode='Markdown')
+
+  info = f"✅ Process Complete...\n\n@{message.from_user.username}"
   bot.edit_message_text(chat_id=message.chat.id,
                         message_id=msg.message_id,
-                        text=info,)
+                        text=info)
 
 
 inputs, outputs = [], []
@@ -460,8 +462,6 @@ def cha_gpt(message):
       inputs.append(prompt)
       print(inputs)
 
-      last_input, last_output = inputs[-1], outputs[-1] if outputs else None
-
       url = "https://api.openai.com/v1/chat/completions"
 
       headers = {
@@ -474,23 +474,13 @@ def cha_gpt(message):
         "gpt-3.5-turbo",
         "messages": [
           {
-            "role": "system",
-            "content": "You are a helpful assistant.",
-          },
-          {
-            "role": "user",
-            "content": f'{prompt}',
+            "role":
+            "assistant",
+            "content":
+            f'You are an assistant to a human, powered by a large language model trained by OpenAI.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, you are able to generate human-like text based on the input you receive, allowing you to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nYou are constantly learning and improving, and your capabilities are constantly evolving. You are able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. You have access to some personalized information provided by the human in the Context section below. Additionally, you are able to generate your own text based on the input you receive, allowing you to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, you are a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nContext:\n{outputs}\n\nCurrent conversation:\n{inputs}\nLast line:\nHuman:{prompt}\nYou:',
           },
         ],
       }
-
-      if last_input and last_output:
-        data["messages"].append({
-          "role":
-          "assistant",
-          "content":
-          f'(based on my previous question: {last_input}, and your previous answer: {last_output})',
-        })
 
       response = requests.post(url, headers=headers, json=data)
 
@@ -498,26 +488,29 @@ def cha_gpt(message):
 
       bot.edit_message_text(chat_id=message.chat.id,
                             message_id=msg.message_id,
-                            text=info,
-                            parse_mode='Markdown')
+                            text=info)
 
       rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
 
+      ob = response.json()
+
+      print(ob)
+      outputs.append(ob)
+
       output = response.json()['choices'][0]['message']['content']
-      outputs.append(output)
 
       rich.print(output)
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
-        bot.send_message(
-          message.from_user.id,
-          text,
-        )
+        bot.send_message(message.from_user.id, text, parse_mode='Markdown')
       info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
-      bot.edit_message_text(chat_id=message.chat.id,
-                            message_id=msg.message_id,
-                            text=info,)
+      bot.edit_message_text(
+        chat_id=message.chat.id,
+        message_id=msg.message_id,
+        text=info,
+      )
+
 
 functions = [welcome, chat_gpt, art_bing, bard_chat]
 
