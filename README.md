@@ -12,6 +12,7 @@
 -  🌐 INTERNET ACCESS (⭕ in progress)
 -  🔊 VOICE (⭕ in progress)
 -  🌈 CODE FORMATTING
+-  🧠 Remember Previous Conversation
 
 
 <br>
