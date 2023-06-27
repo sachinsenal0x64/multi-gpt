@@ -15,9 +15,10 @@
 -  🧠 REMEMBER PREVIOUS CONVERSATION
 
 
+
 ## 😎 DEMO
 
-<a href="https://app.sendpotion.com/649b68112b30a81513e1b152"><img alt="Potion video" src="https://app.sendpotion.com/media/gif/649b68112b30a81513e1b152.gif" /></a>
+<center><a href="https://app.sendpotion.com/649b68112b30a81513e1b152"><img alt="Potion video" src="https://app.sendpotion.com/media/gif/649b68112b30a81513e1b152.gif" /></a></center>
 
 <br>
 
