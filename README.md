@@ -6,7 +6,7 @@
 -  🔓 JAILBREAK MODES
 -  🎨 DALLE 2 
 -  🌟 BARD
--  🍪 MULTI ACCOUNT
+-  🍪 MULTI ACCOUNT (For Speed Up)
 -  ⚡️ MULTI THREADING
 -  🤖 GPT 4 (⭕ in progress)
 -  🌐 INTERNET ACCESS (⭕ in progress)
