@@ -11,6 +11,7 @@
 -  🤖 GPT 4 (⭕ in progress)
 -  🌐 INTERNET ACCESS (⭕ in progress)
 -  🔊 VOICE (⭕ in progress)
+-  🌈 CODE FORMATTING
 
 
 <br>
