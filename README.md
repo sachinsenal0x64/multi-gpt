@@ -12,7 +12,7 @@
 -  🌐 INTERNET ACCESS (⭕ in progress)
 -  🔊 VOICE (⭕ in progress)
 -  🌈 CODE FORMATTING
--  🧠 Remember Previous Conversation
+-  🧠 REMEMBER PREVIOUS CONVERSATION
 
 
 <br>
