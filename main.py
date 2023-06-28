@@ -486,13 +486,16 @@ def cha_gpt(message):
 
       response = requests.post(url, headers=headers, json=data)
 
+      rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
+
+
+      
       info = "🟡 Processing..."
 
       bot.edit_message_text(chat_id=message.chat.id,
                             message_id=msg.message_id,
                             text=info)
 
-      rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
 
       ob = response.json()
 
