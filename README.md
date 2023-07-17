@@ -19,9 +19,9 @@
 
 ## ❄ DEMO
 
-<p align="center">
-  <a href="https://app.sendpotion.com/649b68112b30a81513e1b152"><img alt="Potion video" src="https://app.sendpotion.com/media/gif/649b68112b30a81513e1b152.gif" /></a>
-</p>
+
+https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0-bb1b-6e445e1e536c
+
 
 
 
