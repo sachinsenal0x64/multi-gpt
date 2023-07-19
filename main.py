@@ -27,14 +27,16 @@ load_dotenv(find_dotenv())
 chat_gpt = os.getenv("CHAT_GPT")
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 host_url = os.getenv("HOST_URL")
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
-tenant_id = os.getenv("TENANT_ID")
 bard_token = os.getenv("BARD_TOKEN")
 
 bot = telebot.TeleBot(telegram_token)
 
 start_time = time.time()
+
+
+@main.route('/')
+def index():
+  return {"STATUS": "RUNNING"}
 
 
 @main.route(f'/{telegram_token}', methods=['POST'])
@@ -447,6 +449,24 @@ def bard_chat(message):
 
 
 inputs, outputs = [], []
+
+
+@bot.message_handler(commands=['gpt4'])
+def gpt4_(message):
+  if message.chat.type in ['private', 'supergroup', 'group']:
+    if not any(word in message.text for word in block_words):
+      bot.send_chat_action(message.chat.id, "typing")
+      username = message.from_user.username
+      print("@", username)
+      msg = bot.send_message(message.chat.id,
+                             "🌀 Processing...",
+                             reply_to_message_id=message.message_id)
+      prompt = message.text
+
+
+
+
+inputs, outputs = [], []
 block_words = ['/art', '/help', '/bard']
 
 
@@ -473,7 +493,7 @@ def cha_gpt(message):
 
       data = {
         "model":
-        "gpt-3.5-turbo",
+        "gpt-3.5-turbo-16k",
         "messages": [
           {
             "role":
@@ -488,14 +508,11 @@ def cha_gpt(message):
 
       rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
 
-
-      
       info = "🟡 Processing..."
 
       bot.edit_message_text(chat_id=message.chat.id,
                             message_id=msg.message_id,
                             text=info)
-
 
       ob = response.json()
 
