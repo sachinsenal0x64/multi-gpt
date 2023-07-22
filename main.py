@@ -19,15 +19,21 @@ import re
 import string
 from telebot import util
 from telebot import formatting
+from langchain.agents import Tool
+from langchain.memory import ConversationBufferMemory
+from langchain.chat_models import ChatOpenAI
+from langchain.agents import initialize_agent
+from langchain.tools import BraveSearch
 
 main = Flask(__name__)
 
 load_dotenv(find_dotenv())
 
-chat_gpt = os.getenv("CHAT_GPT")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 host_url = os.getenv("HOST_URL")
 bard_token = os.getenv("BARD_TOKEN")
+brave_key = os.getenv("BRAVE_KEY")
 
 bot = telebot.TeleBot(telegram_token)
 
@@ -52,7 +58,8 @@ bot.set_my_commands(commands=[
   BotCommand("start", "Welcome 🙌"),
   BotCommand("art", "Prompt 🎨"),
   BotCommand("bard", "Prompt 🤖"),
-  BotCommand("gpt", "Just send Prompt Without Slash 🤖")
+  BotCommand("gpt", "Just send Prompt Without Slash 🤖"),
+  BotCommand("search","Internet Access 🌐"),
 ])
 
 
@@ -448,11 +455,11 @@ def bard_chat(message):
                         text=info)
 
 
-inputs, outputs = [], []
 
 
-@bot.message_handler(commands=['cl'])
-def gpt4_(message):
+
+@bot.message_handler(commands=['search'])
+def search(message):
   if message.chat.type in ['private', 'supergroup', 'group']:
     if not any(word in message.text for word in block_words):
       bot.send_chat_action(message.chat.id, "typing")
@@ -461,9 +468,45 @@ def gpt4_(message):
       msg = bot.send_message(message.chat.id,
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
-      prompt = message.text
+      prompt = message.text.replace('/search','')
+
       
+  
+      search = BraveSearch.from_api_key(api_key=brave_key, search_kwargs={"count": 10})
+
+      tools = [
+          Tool(
+          name ="Search" ,
+          func=search.run,
+          description="useful when you need to answer questions about current events"
+          ),
+      ]
       
+      memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+
+
+      
+      llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-16k")
+      
+      agent_chain = initialize_agent(tools, llm, agent="chat-conversational-react-description",
+                                     verbose=True, memory=memory)
+
+      
+      output = agent_chain.run(input=prompt)
+
+      rich.print(output)
+      
+      splitted_text = util.smart_split(output, chars_per_string=3000)
+      for text in splitted_text:
+        bot.send_message(message.from_user.id, text, parse_mode='Markdown')
+      info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
+      bot.edit_message_text(
+        chat_id=message.chat.id,
+        message_id=msg.message_id,
+        text=info,
+      )
+
 
 
 
@@ -473,7 +516,7 @@ block_words = ['/art', '/help', '/bard']
 
 
 @bot.message_handler(content_types=['text'])
-def cha_gpt(message):
+def cha_gpt_cus(message):
   if message.chat.type in ['private', 'supergroup', 'group']:
     if not any(word in message.text for word in block_words):
       bot.send_chat_action(message.chat.id, "typing")
@@ -489,8 +532,9 @@ def cha_gpt(message):
       url = "https://api.openai.com/v1/chat/completions"
 
       headers = {
-        "Authorization": f"Bearer {chat_gpt}",
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json",
+        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.82"
       }
 
       data = {
@@ -510,6 +554,9 @@ def cha_gpt(message):
 
       rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
 
+    
+
+      
       info = "🟡 Processing..."
 
       bot.edit_message_text(chat_id=message.chat.id,
@@ -524,7 +571,7 @@ def cha_gpt(message):
       output = response.json()['choices'][0]['message']['content']
 
       rich.print(output)
-
+      
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
         bot.send_message(message.from_user.id, text, parse_mode='Markdown')
@@ -535,8 +582,7 @@ def cha_gpt(message):
         text=info,
       )
 
-
-functions = [welcome, chat_gpt, art_bing, bard_chat]
+functions = [welcome,cha_gpt_cus,search, art_bing, bard_chat]
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
   results = executor.map(lambda func: func, functions)
