@@ -451,7 +451,7 @@ def bard_chat(message):
 inputs, outputs = [], []
 
 
-@bot.message_handler(commands=['gpt4'])
+@bot.message_handler(commands=['cl'])
 def gpt4_(message):
   if message.chat.type in ['private', 'supergroup', 'group']:
     if not any(word in message.text for word in block_words):
@@ -462,6 +462,8 @@ def gpt4_(message):
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
       prompt = message.text
+      
+      
 
 
 
