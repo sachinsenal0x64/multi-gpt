@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "repl_nix_MULTI-GPT"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.31.0"
+rich = "^13.4.2"
+telebot = "^0.0.5"
+waitress = "^2.1.2"
+Flask = "^2.3.2"
+Pillow = "^10.0.0"
+python-dotenv = "^1.0.0"
+regex = "^2023.6.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
