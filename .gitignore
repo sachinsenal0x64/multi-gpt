@@ -67,6 +67,8 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+.env
+cookies.json
 
 # Sphinx documentation
 docs/_build/
