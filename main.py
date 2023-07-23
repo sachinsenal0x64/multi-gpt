@@ -29,7 +29,7 @@ main = Flask(__name__)
 
 load_dotenv(find_dotenv())
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+open_api = os.getenv("OPENAI_API_KEY")
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 host_url = os.getenv("HOST_URL")
 bard_token = os.getenv("BARD_TOKEN")
@@ -465,7 +465,8 @@ def search(message):
       msg = bot.send_message(message.chat.id,
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
-      prompt = message.text.replace('/search', '')
+      
+      prompt = message.text.replace('/search', '').strip()
 
       search = BraveSearch.from_api_key(api_key=brave_key,
                                         search_kwargs={"count": 10})
@@ -477,7 +478,7 @@ def search(message):
              "useful when you need to answer questions about current events"),
       ]
 
-      memory = ConversationBufferMemory(memory_key="chat_history",
+      memory = ConversationBufferMemory(openai_api_key=open_api,memory_key="chat_history",
                                         return_messages=True)
 
       llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
@@ -490,8 +491,6 @@ def search(message):
         memory=memory)
 
       output = agent_chain.run(input=prompt)
-
-      rich.print(output)
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
