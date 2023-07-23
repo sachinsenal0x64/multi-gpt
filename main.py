@@ -25,6 +25,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent
 from langchain.tools import BraveSearch
 
+
 main = Flask(__name__)
 
 load_dotenv(find_dotenv())
