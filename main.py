@@ -519,13 +519,13 @@ def cha_gpt_cus(message):
                              reply_to_message_id=message.message_id)
       prompt = message.text
       inputs.append(prompt)
-      print(inputs)
+      
 
       url = "https://api.openai.com/v1/chat/completions"
 
       headers = {
         "Authorization":
-        f"Bearer {OPENAI_API_KEY}",
+        f"Bearer {open_api}",
         "Content-Type":
         "application/json",
         "User-Agent":
@@ -557,12 +557,10 @@ def cha_gpt_cus(message):
 
       ob = response.json()
 
-      print(ob)
       outputs.append(ob)
 
       output = response.json()['choices'][0]['message']['content']
 
-      rich.print(output)
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
