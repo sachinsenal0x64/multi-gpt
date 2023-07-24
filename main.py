@@ -483,16 +483,17 @@ def search(message):
         ),
       ]
 
-      memory = ConversationBufferMemory(openai_api_key=open_api,
+      memory = ConversationBufferMemory(
                                         memory_key="chat_history",
                                         return_messages=True)
 
-      llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
+      llm = ChatOpenAI(openai_api_key=open_api,model="gpt-3.5-turbo-16k")
 
       agent_chain = initialize_agent(
         tools,
         llm,
         agent="chat-conversational-react-description",
+        handle_parsing_errors="Check your output and make sure it conforms!",
         verbose=True,
         memory=memory)
 
