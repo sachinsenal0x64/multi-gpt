@@ -23,8 +23,7 @@ from langchain.agents import Tool
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent
-from langchain.tools import BraveSearch
-
+from langchain.tools import DuckDuckGoSearchRun
 
 main = Flask(__name__)
 
@@ -439,6 +438,8 @@ def bard_chat(message):
   ba_output.append(results)
   o = results['content']
 
+
+  
   # Define the 'ba_output' list before using it
 
   print(o)
@@ -466,20 +467,24 @@ def search(message):
       msg = bot.send_message(message.chat.id,
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
-      
+
       prompt = message.text.replace('/search', '').strip()
 
-      search = BraveSearch.from_api_key(api_key=brave_key,
-                                        search_kwargs={"count": 10})
+      print(prompt)
+
+      search = DuckDuckGoSearchRun()
 
       tools = [
-        Tool(name="Search",
-             func=search.run,
-             description=
-             "useful when you need to answer questions about current events"),
+        Tool(
+          name="Current Search",
+          func=search.run,
+          description=
+          "useful for when you need to answer questions about current events or the current state of the world"
+        ),
       ]
 
-      memory = ConversationBufferMemory(openai_api_key=open_api,memory_key="chat_history",
+      memory = ConversationBufferMemory(openai_api_key=open_api,
+                                        memory_key="chat_history",
                                         return_messages=True)
 
       llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
@@ -492,6 +497,8 @@ def search(message):
         memory=memory)
 
       output = agent_chain.run(input=prompt)
+
+      print(output)
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
@@ -520,7 +527,6 @@ def cha_gpt_cus(message):
                              reply_to_message_id=message.message_id)
       prompt = message.text
       inputs.append(prompt)
-      
 
       url = "https://api.openai.com/v1/chat/completions"
 
@@ -548,7 +554,7 @@ def cha_gpt_cus(message):
 
       response = requests.post(url, headers=headers, json=data)
 
-      rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
+      # rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
 
       info = "🟡 Processing..."
 
@@ -561,7 +567,6 @@ def cha_gpt_cus(message):
       outputs.append(ob)
 
       output = response.json()['choices'][0]['message']['content']
-
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
