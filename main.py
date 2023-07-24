@@ -343,7 +343,6 @@ def art_bing(message):
 
 ba_input, ba_output = [], []
 
-
 @bot.message_handler(commands=['bard'])
 def bard_chat(message):
   bot.send_chat_action(message.chat.id, "typing")
@@ -460,7 +459,6 @@ def bard_chat(message):
 @bot.message_handler(commands=['search'])
 def search(message):
   if message.chat.type in ['private', 'supergroup', 'group']:
-    if not any(word in message.text for word in block_words):
       bot.send_chat_action(message.chat.id, "typing")
       username = message.from_user.username
       print("@", username)
