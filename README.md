@@ -27,12 +27,12 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 
 <br>
 
-## 🧶 Installation
+## 🧶 INSTALLATION
 
 - 🎯 In Progress
 
-
 <br>
+
 
 ## 💡 Pros
 
