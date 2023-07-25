@@ -9,7 +9,7 @@
 -  🍪 MULTI ACCOUNT (For Speed Up)
 -  ⚡️ MULTI THREADING
 -  🤖 GPT 4 (⭕ in progress)
--  🌐 INTERNET ACCESS (⭕ in progress)
+-  🌐 INTERNET ACCESS
 -  🔊 VOICE (⭕ in progress)
 -  🌈 CODE FORMATTING
 -  🧠 REMEMBER PREVIOUS CONVERSATION
