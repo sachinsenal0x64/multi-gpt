@@ -455,6 +455,7 @@ def bard_chat(message):
                         message_id=msg.message_id,
                         text=info)
 
+# Internet Access
 
 @bot.message_handler(commands=['search'])
 def search(message):
