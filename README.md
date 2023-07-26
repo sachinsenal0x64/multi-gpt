@@ -38,6 +38,10 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 - ```python
   python main.py or python3 main.py
 
+
+<br>
+
+
 ### 🔑 .ENV AND COOKIES.JSON SETUP
 
 - First you have to rename **.env.example** File into **.env** After Follow This https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761
