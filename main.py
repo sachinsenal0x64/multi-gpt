@@ -33,12 +33,15 @@ open_api = os.getenv("OPENAI_API_KEY")
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 host_url = os.getenv("HOST_URL")
 bard_token = os.getenv("BARD_TOKEN")
-brave_key = os.getenv("BRAVE_KEY")
+cookie_1 = os.getenv("COOKIE_1")
+cookie_2 = os.getenv("COOKIE_2")
 
 bot = telebot.TeleBot(telegram_token)
 
 start_time = time.time()
 
+
+dalle_multi_cookie = [cookie_1,cookie_2]
 
 @main.route('/')
 def index():
@@ -72,6 +75,60 @@ Hello @%s ! 😊 How are you ?\n
 """ % message.from_user.username)
 
 
+#INTERNET
+
+
+@bot.message_handler(commands=['search'])
+def internet(message):
+  if message.chat.type in ['private', 'supergroup', 'group']:
+    bot.send_chat_action(message.chat.id, "typing")
+    username = message.from_user.username
+    print("@", username)
+    msg = bot.send_message(message.chat.id,
+                           "🌀 Processing...",
+                           reply_to_message_id=message.message_id)
+
+    prompt = message.text.replace('/search', '').strip()
+
+    print(prompt)
+
+    search = DuckDuckGoSearchRun()
+
+    tools = [
+      Tool(
+        name="Current Search",
+        func=search.run,
+        description=
+        "useful for when you need to answer questions about current events or the current state of the world"
+      ),
+    ]
+
+    memory = ConversationBufferMemory(memory_key="chat_history",
+                                      return_messages=True)
+
+    llm = ChatOpenAI(openai_api_key=open_api, model="gpt-3.5-turbo-16k")
+
+    agent_chain = initialize_agent(
+      tools,
+      llm,
+      agent="chat-conversational-react-description",
+      verbose=True,
+      handle_parsing_errors="Check your output and make sure it conforms!",
+      memory=memory)
+
+    output = agent_chain.run(input=prompt)
+
+    splitted_text = util.smart_split(output, chars_per_string=3000)
+    for text in splitted_text:
+      bot.send_message(message.from_user.id, text, parse_mode='Markdown')
+    info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
+    bot.edit_message_text(
+      chat_id=message.chat.id,
+      message_id=msg.message_id,
+      text=info,
+    )
+
+
 #DALLE IMG GEN
 
 
@@ -84,9 +141,6 @@ def art_bing(message):
                          "🌀 Processing...",
                          reply_to_message_id=message.message_id)
 
-  # Save cookies to a JSON file
-  with open('cookies.json', 'r') as file:
-    cookies = json.load(file)
 
   if message.text == '/art':
     warn = f" Please Send Prompt : /art <PROMPT> "
@@ -333,7 +387,7 @@ def art_bing(message):
                           text=info,
                           parse_mode='Markdown')
 
-  auth_cookie = random.choice(cookies)
+  auth_cookie = random.choice(dalle_multi_cookie)
   text = message.text.replace('/art', '').strip()
   prompt = f'{text}'
   output_folder = ""
@@ -342,6 +396,7 @@ def art_bing(message):
 
 
 ba_input, ba_output = [], []
+
 
 @bot.message_handler(commands=['bard'])
 def bard_chat(message):
@@ -437,8 +492,6 @@ def bard_chat(message):
   ba_output.append(results)
   o = results['content']
 
-
-  
   # Define the 'ba_output' list before using it
 
   print(o)
@@ -454,61 +507,6 @@ def bard_chat(message):
   bot.edit_message_text(chat_id=message.chat.id,
                         message_id=msg.message_id,
                         text=info)
-
-# Internet Access
-
-@bot.message_handler(commands=['search'])
-def search(message):
-  if message.chat.type in ['private', 'supergroup', 'group']:
-      bot.send_chat_action(message.chat.id, "typing")
-      username = message.from_user.username
-      print("@", username)
-      msg = bot.send_message(message.chat.id,
-                             "🌀 Processing...",
-                             reply_to_message_id=message.message_id)
-
-      prompt = message.text.replace('/search', '').strip()
-
-      print(prompt)
-
-      search = DuckDuckGoSearchRun()
-
-      tools = [
-        Tool(
-          name="Current Search",
-          func=search.run,
-          description=
-          "useful for when you need to answer questions about current events or the current state of the world"
-        ),
-      ]
-
-      memory = ConversationBufferMemory(
-                                        memory_key="chat_history",
-                                        return_messages=True)
-
-      llm = ChatOpenAI(openai_api_key=open_api,model="gpt-3.5-turbo-16k")
-
-      agent_chain = initialize_agent(
-        tools,
-        llm,
-        agent="chat-conversational-react-description",
-        handle_parsing_errors="Check your output and make sure it conforms!",
-        verbose=True,
-        memory=memory)
-
-      output = agent_chain.run(input=prompt)
-
-      print(output)
-
-      splitted_text = util.smart_split(output, chars_per_string=3000)
-      for text in splitted_text:
-        bot.send_message(message.from_user.id, text, parse_mode='Markdown')
-      info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
-      bot.edit_message_text(
-        chat_id=message.chat.id,
-        message_id=msg.message_id,
-        text=info,
-      )
 
 
 inputs, outputs = [], []
@@ -554,6 +552,8 @@ def cha_gpt_cus(message):
 
       response = requests.post(url, headers=headers, json=data)
 
+      rich.print(response.json())
+
       # rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
 
       info = "🟡 Processing..."
@@ -579,7 +579,7 @@ def cha_gpt_cus(message):
       )
 
 
-functions = [welcome, cha_gpt_cus, search, art_bing, bard_chat]
+functions = [welcome, cha_gpt_cus, internet, art_bing, bard_chat]
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
   results = executor.map(lambda func: func, functions)
