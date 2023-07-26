@@ -1,7 +1,7 @@
 <div align="center">
 <br>
   <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/sachinsenal0x64/PICX-IMAGE-HOSTING@master/1690363679188.jpg" width="150px" height="150px">
+  <img src="https://cdn.jsdelivr.net/gh/sachinsenal0x64/PICX-IMAGE-HOSTING@master/233398049-0456e5f8-c36e-42fa-a933-2fb640bdf714.5youlug8s180.webp" width="150px" height="150px">
   </p>
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Handlee&center=true&vCenter=true&width=500&height=60&lines=This+is+multi+gpt+🚀+.)](https://git.io/typing-svg)
