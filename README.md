@@ -29,9 +29,15 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 
 ## 🧶 INSTALLATION
 
-- ```git clone https://github.com/sachinsenal0x64/MULTI-GPT.git```
-- ```pip install -r requirements.txt```
-- ```python main.py or python3 main.py```
+- ```python
+  git clone https://github.com/sachinsenal0x64/MULTI-GPT.git ```
+  
+- ```python
+  pip install -r requirements.txt```
+  
+- ```python
+  python main.py or python3 main.py ```
+
 
 <br>
 
