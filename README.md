@@ -4,7 +4,7 @@
   <img src="https://user-images.githubusercontent.com/42825450/233398049-0456e5f8-c36e-42fa-a933-2fb640bdf714.png" width="150px" height="150px">
   </p>
 
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Handlee&center=true&vCenter=true&width=500&height=60&lines=This+is+multi+gpt.)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Handlee&center=true&vCenter=true&width=500&height=60&lines=This+is+multi+gpt+🚀.)](https://git.io/typing-svg)
 
 <img src="https://camo.githubusercontent.com/82291b0fe831bfc6781e07fc5090cbd0a8b912bb8b8d4fec0696c881834f81ac/68747470733a2f2f70726f626f742e6d656469612f394575424971676170492e676966"
 width="1800"  height="3">
