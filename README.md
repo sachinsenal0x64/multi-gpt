@@ -40,6 +40,7 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 
 <br>
 
+
 ## OR
 
 
@@ -50,6 +51,9 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 ### 🔑 .ENV AND COOKIES.JSON SETUP
 
 - First you have to rename **.env.example**  file into  **.env**  after follow this [Guide](https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761)
+
+  
+<br>
 
 
 ## 📕 USAGE 
