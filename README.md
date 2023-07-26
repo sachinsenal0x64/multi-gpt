@@ -6,7 +6,7 @@
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Handlee&center=true&vCenter=true&width=500&height=60&lines=This+is+multi+gpt+🚀+.)](https://git.io/typing-svg)
 
-<img src="https://github.com/sachinsenal0x64/IMAGE-HOSTING/blob/7a5eb429496e18edb4c4111c59303b110db77f44/ledstrip.gif"
+<img src="https://cdn.jsdelivr.net/gh/sachinsenal0x64/PICX-IMAGE-HOSTING@master/ledstrip.3024rqxzahq0.gif"
 width="1800"  height="3">
 
 </div>
