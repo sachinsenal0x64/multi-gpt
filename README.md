@@ -38,6 +38,11 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 - ```python
   python main.py or python3 main.py
 
+<br>
+
+## OR
+
+
 
 <br>
 
@@ -46,6 +51,10 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 
 - First you have to rename **.env.example**  file into  **.env**  after follow this [Guide](https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761)
 
+
+## 📕 USAGE 
+
+- 🎯 In Progress
 
 
 
