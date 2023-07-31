@@ -60,13 +60,13 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 
 ### 🔑 .ENV SETUP
 
-- First you have to rename **.env.example**  File into  **.env**  after follow this [Guide](https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761)
+- First you have to rename **.env.example**  File into  **.env**  after Follow this [Guide](https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761)
 
 <br>
 
 ## OR
 
-The Fastest Way To Deploy The Multi-Gpt To `repl.it`
+The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can use `secrets` as a .env Follow this  [Guide](https://docs.replit.com/programming-ide/workspace-features/secrets)
 
 <a href="https://replit.com/github/0x64llm/MULTI-GPT">
   <img alt="Run on Repl.it" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
