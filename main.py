@@ -633,9 +633,17 @@ def cha_gpt_cus(message):
                                             ])  # Pass the user ID as a list
 
       # Build the reprompt with the specific user's conversation history
-      reprompt = f" Your name is MULTI GPT.\n\nYou: {user_question}\n\n"
+      reprompt = " Your name is MULTI GPT.\n\nYou: {}\n\n"
       for user_id, role, content in mems:
-        reprompt += f"{user_id}: \n{role}: {content}\n"
+        reprompt += f"{role}: {content}\n"
+
+        # Check if there is no conversation history for the user
+      if len(mems) == 0:
+        # If no history, start the conversation with a greeting or prompt
+        reprompt = "Hello! How can I assist you today?\n\nYou: {}".format(
+          user_question)
+
+        rich.print(reprompt)
 
       url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
 
