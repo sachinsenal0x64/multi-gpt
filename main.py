@@ -607,7 +607,7 @@ def cha_gpt_cus(message):
             "role":
             "system",
             "content":
-            f""" Your name is MULTI-GPT. You are a language model with access to the Internet. Knowledge cutoff: September 2021. Current date and time: {time.strftime("%A, %d %B %Y, %I:%M %p UTC%z")}."""
+            f""" Your name is MULTI GPT. You are a language model with access to the Internet. Knowledge cutoff: September 2021. Current date and time: {time.strftime("%A, %d %B %Y, %I:%M %p UTC%z")}."""
             .strip(),
           },
           {
