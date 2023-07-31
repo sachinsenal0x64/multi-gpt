@@ -19,7 +19,7 @@ width="1800"  height="3">
 
 ##  🚀 Features
 
--  🤖 GPT PLUS (3.5-Turbo)
+-  🤖 GPT PLUS (3.5-Turbo-16K)
 -  🔓 JAILBREAK MODES
 -  🎨 DALLE 2 
 -  🌟 BARD
@@ -29,7 +29,7 @@ width="1800"  height="3">
 -  🌐 INTERNET ACCESS
 -  🔊 VOICE (⭕ in progress)
 -  🌈 CODE FORMATTING
--  🧠 REMEMBER PREVIOUS CONVERSATION
+-  🧠 REMEMBER PREVIOUS CONVERSATION (Entity Memory)
 
 
 <br>
@@ -41,7 +41,17 @@ width="1800"  height="3">
 
 https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0-bb1b-6e445e1e536c
 
+<br>
 
+## 🤖 TRY
+
+
+<a href="https://t.me/OPENAIX_BOT">
+  <img alt="" src="https://img.shields.io/badge/Telegram-2CA5E0?style=badge&logo=telegram&logoColor=white" style="height: 30px; width: 120px;" /> 
+</a>
+
+
+<br>
 <br>
 
 ## 🧶 INSTALLATION
@@ -55,28 +65,28 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 - ```python
   python main.py or python3 main.py
 
-<br>
 
+<br>
+<br>
 
 ### 🔑 .ENV SETUP
 
-- First you have to rename **.env.example**  file into  **.env**  after follow this [Guide](https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761)
+- First you have to rename **.env.example**  File into  **.env**  after Follow this [Guide](https://github.com/sachinsenal0x64/MULTI-GPT/issues/26#issuecomment-1650076761)
 
 <br>
 
 ## OR
 
-The fastest way to deploy the multi-gpt to `repl.it` is to click the `run on repl.it` button below.
+The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can use `secrets` as a .env Follow this  [Guide](https://docs.replit.com/programming-ide/workspace-features/secrets)
 
-<a href="https://replit.com/github/0x64llm/MULTI-GPT">
-  <img alt="Run on Repl.it" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
+<a href="https://replit.com/@0x64llm/MULTI-GPT?v=1">
+  <img alt="" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
+  
 </a>
 
 
-
 <br>
 <br>
-
 
 
 ## 📕 USAGE 
