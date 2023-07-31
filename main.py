@@ -1,6 +1,7 @@
 import telebot
 from dotenv import load_dotenv, find_dotenv
 from telebot.types import BotCommand, InputMediaPhoto
+
 import concurrent.futures
 from flask import Flask, request
 import os
@@ -20,6 +21,7 @@ from io import BytesIO
 import re
 import string
 from telebot import util
+import sqlite3
 from langchain.agents import Tool
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
@@ -558,10 +560,21 @@ def bard_chat(message):
                         text=info)
 
 
-inputs, outputs, internet = [], [], []
 block_words = ['/art', '/help', '/bard']
 
 
+# Define the function to get user conversation history from the SQLite database
+def get_user_conversation_history(user_id):
+  conn = sqlite3.connect('conversation_history.db')
+  cursor = conn.cursor()
+  cursor.execute("SELECT role, content FROM conversation WHERE user_id=?",
+                 (user_id, ))
+  rows = cursor.fetchall()
+  conn.close()
+  return rows
+
+
+# Define the handler for text messages
 @bot.message_handler(content_types=['text'])
 def cha_gpt_cus(message):
   if message.chat.type in ['private', 'supergroup', 'group']:
@@ -572,25 +585,56 @@ def cha_gpt_cus(message):
       msg = bot.send_message(message.chat.id,
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
-      prompt = message.text
 
-      search = DuckDuckGoSearchRun()
+      user_id = message.from_user.id  # Use user ID to identify users
+      user_question = message.text
 
-      Internet_Current_Search = search.run(prompt)
+      # Perform internet search using DuckDuckGo (or your custom class)
+      search = DuckDuckGoSearchRun(
+      )  # If you have a custom class for DuckDuckGo search
+      search_result = search.run(user_question)
 
-      print(Internet_Current_Search)
+      # Create or connect to the SQLite database
+      conn = sqlite3.connect('conversation_history.db')
+      cursor = conn.cursor()
 
-      inputs.append(prompt)
+      # Create a table to store conversation history if it doesn't exist
+      cursor.execute('''CREATE TABLE IF NOT EXISTS conversation (
+                              id INTEGER PRIMARY KEY,
+                              user_id INTEGER,
+                              role TEXT,
+                              content TEXT
+                          )''')
+      conn.commit()
 
-      internet.append(Internet_Current_Search)
+      # Append user input to the SQLite database along with the user ID
+      cursor.execute(
+        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
+        (user_id, 'user', user_question))
+      conn.commit()
 
-      #https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions
+      # Append the search result to the SQLite database along with the user ID
+      cursor.execute(
+        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
+        (user_id, 'internet', search_result))
+      conn.commit()
+
+      rich.print(search_result)
+
+      # Retrieve all conversation history of the specific user from the SQLite database
+      mems = get_user_conversation_history(user_id)
+
+      # Build the reprompt with the specific user's conversation history
+      reprompt = f""" Your name is MULTI GPT. You are a language model with access to the Internet. Knowledge cutoff: September 2021. Current date and time: {time.strftime("%A, %d %B %Y, %I:%M %p UTC%z ")}\n""".strip(
+      )
+      for role, content in mems:
+        reprompt += f"{role}: {content}\n"
 
       url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
 
       headers = {
         "Authorization":
-        f"Bearer {open_api}",
+        "Bearer YOUR_API_KEY_HERE",  # Replace with your GPT-3.5 API key
         "Content-Type":
         "application/json",
         "User-Agent":
@@ -598,34 +642,25 @@ def cha_gpt_cus(message):
       }
 
       data = {
-        "model":
-        "gpt-3.5-turbo-16k",
+        "model": "gpt-3.5-turbo-16k",
         "messages": [
           {
-            "role":
-            "system",
-            "content":
-            f""" Your name is MULTI GPT. You are a language model with access to the Internet. Knowledge cutoff: September 2021. Current date and time: {time.strftime("%A, %d %B %Y, %I:%M %p UTC%z")}."""
-            .strip(),
-          },
-          {
-            "role": "user",
-            "content": prompt
-          },
-          {
-            "role":
-            "assistant",
-            "content":
-            f'You are an assistant to a human, powered by a large language model trained by OpenAI.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, you are able to generate human-like text based on the input you receive, allowing you to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nYou are constantly learning and improving, and your capabilities are constantly evolving. You are able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. You have access to some personalized information provided by the human in the Context section below. Additionally, you are able to generate your own text based on the input you receive, allowing you to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, you are a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nContext:\n{outputs}\n\nCurrent conversation:\n{inputs}\nLast line\nYou:'
+            "role": "assistant",
+            "content": reprompt
           },
         ],
       }
 
       response = requests.post(url, headers=headers, json=data)
+      out = response.json()['choices'][0]['message']['content']
 
-      rich.print(response.json())
+      # Append the assistant's response to the SQLite database along with the user ID
+      cursor.execute(
+        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
+        (user_id, 'MultiGPT', out))
+      conn.commit()
 
-      # rich.print(json.dumps(response.json(), indent=4, sort_keys=False))
+      rich.print("\n" + out + "\n")
 
       info = "🟡 Processing..."
 
@@ -633,21 +668,21 @@ def cha_gpt_cus(message):
                             message_id=msg.message_id,
                             text=info)
 
-      ob = response.json()
-
-      outputs.append(ob)
-
       output = response.json()['choices'][0]['message']['content']
+
+      # Append the GPT-3.5 response to the SQLite database along with the user ID
+      cursor.execute(
+        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
+        (user_id, 'assistant', output))
+      conn.commit()
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
         bot.send_message(message.from_user.id, text, parse_mode='Markdown')
       info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
-      bot.edit_message_text(
-        chat_id=message.chat.id,
-        message_id=msg.message_id,
-        text=info,
-      )
+      bot.edit_message_text(chat_id=message.chat.id,
+                            message_id=msg.message_id,
+                            text=info)
 
 
 functions = [welcome, cha_gpt_cus, internet, art_bing, bard_chat, img]
