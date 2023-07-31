@@ -82,7 +82,7 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 
 
 <a href="https://t.me/OPENAIX_BOT">
-  <img alt="" src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" style="height: 40px; width: 150px;" /> 
+  <img alt="" src="https://img.shields.io/badge/Telegram-2CA5E0?style=badge&logo=telegram&logoColor=white" style="height: 40px; width: 150px;" /> 
 </a>
 
 
