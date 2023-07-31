@@ -51,7 +51,6 @@ def index():
   return {"STATUS": "RUNNING"}
 
 
-
 @main.route(f'/{telegram_token}', methods=['POST'])
 def handle_telegram_webhook():
   update = telebot.types.Update.de_json(request.stream.read().decode('utf-8'))
@@ -635,7 +634,7 @@ def cha_gpt_cus(message):
 
       headers = {
         "Authorization":
-        "Bearer YOUR_API_KEY_HERE",  # Replace with your GPT-3.5 API key
+        f"Bearer {open_api}",  # Replace with your GPT-3.5 API key
         "Content-Type":
         "application/json",
         "User-Agent":
