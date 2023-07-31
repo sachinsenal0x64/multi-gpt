@@ -49,6 +49,7 @@ def index():
   return {"STATUS": "RUNNING"}
 
 
+
 @main.route(f'/{telegram_token}', methods=['POST'])
 def handle_telegram_webhook():
   update = telebot.types.Update.de_json(request.stream.read().decode('utf-8'))
