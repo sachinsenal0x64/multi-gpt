@@ -41,9 +41,7 @@ width="1800"  height="3">
 
 https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0-bb1b-6e445e1e536c
 
-<br>
 
-[Try Demo](https://t.me/OPENAIX_BOT)
 
 <br>
 
@@ -73,8 +71,19 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 
 <a href="https://replit.com/@0x64llm/MULTI-GPT?v=1">
   <img alt="" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
+  
 </a>
 
+<br>
+<br>
+
+
+## 🤖 TRY DEMO
+
+
+<a href="https://t.me/OPENAIX_BOT">
+  <img alt="" src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" style="height: 40px; width: 190px;" /> 
+</a>
 
 
 <br>
