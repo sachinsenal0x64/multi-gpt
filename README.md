@@ -65,8 +65,9 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 - ```python
   python main.py or python3 main.py
 
-<br>
 
+<br>
+<br>
 
 ### 🔑 .ENV SETUP
 
@@ -84,10 +85,8 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 </a>
 
 
-
 <br>
 <br>
-
 
 
 ## 📕 USAGE 
