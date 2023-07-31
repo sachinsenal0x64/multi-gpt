@@ -673,7 +673,7 @@ def cha_gpt_cus(message):
       # Append the GPT-3.5 response to the SQLite database along with the user ID
       cursor.execute(
         "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'assistant', output))
+        (user_id, 'MultiGPT', output))
       conn.commit()
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
