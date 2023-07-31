@@ -19,7 +19,7 @@ width="1800"  height="3">
 
 ##  🚀 Features
 
--  🤖 GPT PLUS (3.5-Turbo)
+-  🤖 GPT PLUS (3.5-Turbo-16K)
 -  🔓 JAILBREAK MODES
 -  🎨 DALLE 2 
 -  🌟 BARD
