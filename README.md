@@ -66,7 +66,7 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 
 ## OR
 
-The fastest way to deploy the multi-gpt to `repl.it` is to click the `run on repl.it` button below.
+The Fastest Way To Deploy The Multi-Gpt To `repl.it`
 
 <a href="https://replit.com/github/0x64llm/MULTI-GPT">
   <img alt="Run on Repl.it" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
