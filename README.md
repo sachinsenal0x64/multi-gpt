@@ -29,7 +29,7 @@ width="1800"  height="3">
 -  🌐 INTERNET ACCESS
 -  🔊 VOICE (⭕ in progress)
 -  🌈 CODE FORMATTING
--  🧠 REMEMBER PREVIOUS CONVERSATION
+-  🧠 REMEMBER PREVIOUS CONVERSATION (MEMORY)
 
 
 <br>
