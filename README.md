@@ -69,7 +69,7 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can use `secrets` as a .env Follow this  [Guide](https://docs.replit.com/programming-ide/workspace-features/secrets)
 
 <a href="https://replit.com/@0x64llm/MULTI-GPT?v=1">
-  <img alt="Run on Repl.it" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
+  <img alt="" src="https://repl.it/badge/github/0x64llm/MULTI-GPT" style="height: 40px; width: 190px;" />
 </a>
 
 
