@@ -562,14 +562,21 @@ def bard_chat(message):
 
 block_words = ['/art', '/help', '/bard']
 
-
 # Define the function to get user conversation history from the SQLite database
-def get_user_conversation_history(user_id):
+
+
+def get_user_conversation_history(user_ids):
   conn = sqlite3.connect('conversation_history.db')
   cursor = conn.cursor()
-  cursor.execute("SELECT role, content FROM conversation WHERE user_id=?",
-                 (user_id, ))
+
+  # Prepare the query with multiple user IDs using placeholders
+  query = "SELECT user_id, role, content FROM conversation WHERE user_id IN ({})".format(
+    ','.join('?' * len(user_ids)))
+
+  # Execute the query with the user IDs
+  cursor.execute(query, user_ids)
   rows = cursor.fetchall()
+
   conn.close()
   return rows
 
@@ -622,13 +629,13 @@ def cha_gpt_cus(message):
       rich.print(search_result)
 
       # Retrieve all conversation history of the specific user from the SQLite database
-      mems = get_user_conversation_history(user_id)
+      mems = get_user_conversation_history([user_id
+                                            ])  # Pass the user ID as a list
 
       # Build the reprompt with the specific user's conversation history
-      reprompt = f""" Your name is MULTI GPT. You are a language model with access to the Internet. Knowledge cutoff: September 2021. Current date and time: {time.strftime("%A, %d %B %Y, %I:%M %p UTC%z ")}\n""".strip(
-      )
-      for role, content in mems:
-        reprompt += f"{role}: {content}\n"
+      reprompt = f" Your name is MULTI GPT.\n\nYou: {user_question}\n\n"
+      for user_id, role, content in mems:
+        reprompt += f"{user_id}: \n{role}: {content}\n"
 
       url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
 
@@ -657,7 +664,7 @@ def cha_gpt_cus(message):
       # Append the assistant's response to the SQLite database along with the user ID
       cursor.execute(
         "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'MultiGPT', out))
+        (user_id, 'assistant', out))
       conn.commit()
 
       rich.print("\n" + out + "\n")
@@ -673,7 +680,7 @@ def cha_gpt_cus(message):
       # Append the GPT-3.5 response to the SQLite database along with the user ID
       cursor.execute(
         "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'MultiGPT', output))
+        (user_id, 'assistant', output))
       conn.commit()
 
       splitted_text = util.smart_split(output, chars_per_string=3000)
@@ -685,7 +692,10 @@ def cha_gpt_cus(message):
                             text=info)
 
 
-functions = [welcome, cha_gpt_cus, internet, art_bing, bard_chat, img]
+functions = [
+  welcome, cha_gpt_cus, internet, art_bing, bard_chat, img,
+  get_user_conversation_history
+]
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
   results = executor.map(lambda func: func, functions)
