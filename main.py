@@ -1,6 +1,7 @@
 import telebot
 from dotenv import load_dotenv, find_dotenv
-from telebot.types import BotCommand
+from telebot.types import BotCommand, InputMediaPhoto
+
 import concurrent.futures
 from flask import Flask, request
 import os
@@ -8,17 +9,19 @@ from waitress import serve
 import requests
 import json
 import time
+import datetime
 import rich
 import random
 from typing import Dict
 from typing import List
 import regex
 from PIL import Image, ImageFilter
+from telebot import formatting
 from io import BytesIO
 import re
 import string
 from telebot import util
-from telebot import formatting
+
 from langchain.agents import Tool
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
@@ -40,8 +43,8 @@ bot = telebot.TeleBot(telegram_token)
 
 start_time = time.time()
 
+dalle_multi_cookie = [cookie_1, cookie_2]
 
-dalle_multi_cookie = [cookie_1,cookie_2]
 
 @main.route('/')
 def index():
@@ -60,7 +63,8 @@ def handle_telegram_webhook():
 bot.set_my_commands(commands=[
   BotCommand("start", "Welcome 🙌"),
   BotCommand("art", "Prompt 🎨"),
-  BotCommand("bard", "Prompt 🤖"),
+  BotCommand("bard", "Art Prompt 🤖"),
+  BotCommand("img", "Dalle Prompt 🎨 "),
   BotCommand("gpt", "Just send Prompt Without Slash 🤖"),
   BotCommand("search", "Internet Access 🌐"),
 ])
@@ -75,7 +79,7 @@ Hello @%s ! 😊 How are you ?\n
 """ % message.from_user.username)
 
 
-#INTERNET
+# #INTERNET
 
 
 @bot.message_handler(commands=['search'])
@@ -93,6 +97,10 @@ def internet(message):
     print(prompt)
 
     search = DuckDuckGoSearchRun()
+    llm = ChatOpenAI()
+
+    memory = ConversationBufferMemory(memory_key="chat_history",
+                                      return_messages=True)
 
     tools = [
       Tool(
@@ -102,12 +110,6 @@ def internet(message):
         "useful for when you need to answer questions about current events or the current state of the world"
       ),
     ]
-
-    memory = ConversationBufferMemory(memory_key="chat_history",
-                                      return_messages=True)
-
-    llm = ChatOpenAI(openai_api_key=open_api, model="gpt-3.5-turbo-16k")
-
     agent_chain = initialize_agent(
       tools,
       llm,
@@ -132,6 +134,57 @@ def internet(message):
 #DALLE IMG GEN
 
 
+@bot.message_handler(commands=['img'])
+def img(message):
+  bot.send_chat_action(message.chat.id, "typing")
+  print(message.from_user.username)
+  print(message.from_user.id)
+  msg = bot.send_message(message.chat.id,
+                         "🌀 Processing...",
+                         reply_to_message_id=message.message_id)
+
+  if message.text == '/img':
+    warn = f" Please Send Prompt : /img <PROMPT> "
+    bot.edit_message_text(chat_id=message.chat.id,
+                          message_id=msg.message_id,
+                          text=warn,
+                          parse_mode='Markdown')
+
+  text = message.text.replace('/img', '').strip()
+
+  url = "https://chatgpt.hungchongki3984.workers.dev/v1/images/generations"
+
+  headers = {
+    "Content-Type":
+    "application/json",
+    "Authorization":
+    f"Bearer ",
+    "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188"
+  }
+
+  data = {"prompt": f'{text}', "n": 4, "size": "1024x1024"}
+
+  res = requests.post(url, json=data, headers=headers)
+
+  image_urls = [item['url'] for item in res.json()['data']]
+
+  media_g = []
+
+  for url in image_urls:
+    cropped_media = InputMediaPhoto(media=url)
+    media_g.append(cropped_media)
+    rich.print(cropped_media)
+
+  bot.send_media_group(message.from_user.id, media_g)
+
+  info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
+  bot.edit_message_text(chat_id=message.chat.id,
+                        message_id=msg.message_id,
+                        text=info,
+                        parse_mode='Markdown')
+
+
 @bot.message_handler(commands=['art'])
 def art_bing(message):
   bot.send_chat_action(message.chat.id, "typing")
@@ -140,7 +193,6 @@ def art_bing(message):
   msg = bot.send_message(message.chat.id,
                          "🌀 Processing...",
                          reply_to_message_id=message.message_id)
-
 
   if message.text == '/art':
     warn = f" Please Send Prompt : /art <PROMPT> "
@@ -408,11 +460,10 @@ def bard_chat(message):
                          reply_to_message_id=message.message_id)
 
   text = message.text.replace('/bard', '').strip()
+
   print(text)
 
   ba_input.append(text)
-
-  print(ba_input)
 
   prompt = f'You are an assistant to a human, powered by a large language model trained by Google.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, you are able to generate human-like text based on the input you receive, allowing you to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nYou are constantly learning and improving, and your capabilities are constantly evolving. You are able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. You have access to some personalized information provided by the human in the Context section below. Additionally, you are able to generate your own text based on the input you receive, allowing you to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, you are a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nContext:\n{ba_output}\n\nCurrent conversation:\n{ba_input}\nLast line:\nHuman: {text}\nYou:'
 
@@ -503,13 +554,13 @@ def bard_chat(message):
       new_text = text.replace(i, '\\' + i)
     bot.send_message(message.chat.id, new_text, parse_mode='Markdown')
 
-  info = f"✅ Process Complete...\n\n@{message.from_user.username}"
+  info = f"✅ Process Completed ...\n\n@{message.from_user.username}"
   bot.edit_message_text(chat_id=message.chat.id,
                         message_id=msg.message_id,
                         text=info)
 
 
-inputs, outputs = [], []
+inputs, outputs, internet = [], [], []
 block_words = ['/art', '/help', '/bard']
 
 
@@ -524,9 +575,20 @@ def cha_gpt_cus(message):
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
       prompt = message.text
+
+      search = DuckDuckGoSearchRun()
+
+      Internet_Current_Search = search.run(prompt)
+
+      print(Internet_Current_Search)
+
       inputs.append(prompt)
 
-      url = "https://api.openai.com/v1/chat/completions"
+      internet.append(Internet_Current_Search)
+
+      #https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions
+
+      url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
 
       headers = {
         "Authorization":
@@ -543,9 +605,20 @@ def cha_gpt_cus(message):
         "messages": [
           {
             "role":
+            "system",
+            "content":
+            f""" Your name is MULTI-GPT. You are a language model with access to the Internet. Knowledge cutoff: September 2021. Current date and time: {time.strftime("%A, %d %B %Y, %I:%M %p UTC%z")}."""
+            .strip(),
+          },
+          {
+            "role": "user",
+            "content": prompt
+          },
+          {
+            "role":
             "assistant",
             "content":
-            f'You are an assistant to a human, powered by a large language model trained by OpenAI.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, you are able to generate human-like text based on the input you receive, allowing you to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nYou are constantly learning and improving, and your capabilities are constantly evolving. You are able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. You have access to some personalized information provided by the human in the Context section below. Additionally, you are able to generate your own text based on the input you receive, allowing you to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, you are a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nContext:\n{outputs}\n\nCurrent conversation:\n{inputs}\nLast line:\nHuman:{prompt}\nYou:',
+            f'You are an assistant to a human, powered by a large language model trained by OpenAI.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, you are able to generate human-like text based on the input you receive, allowing you to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nYou are constantly learning and improving, and your capabilities are constantly evolving. You are able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. You have access to some personalized information provided by the human in the Context section below. Additionally, you are able to generate your own text based on the input you receive, allowing you to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, you are a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nContext:\n{outputs}\n\nCurrent conversation:\n{inputs}\nLast line\nYou:'
           },
         ],
       }
@@ -571,7 +644,7 @@ def cha_gpt_cus(message):
       splitted_text = util.smart_split(output, chars_per_string=3000)
       for text in splitted_text:
         bot.send_message(message.from_user.id, text, parse_mode='Markdown')
-      info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
+      info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
       bot.edit_message_text(
         chat_id=message.chat.id,
         message_id=msg.message_id,
@@ -579,7 +652,7 @@ def cha_gpt_cus(message):
       )
 
 
-functions = [welcome, cha_gpt_cus, internet, art_bing, bard_chat]
+functions = [welcome, cha_gpt_cus, internet, art_bing, bard_chat, img]
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
   results = executor.map(lambda func: func, functions)
