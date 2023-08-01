@@ -66,7 +66,7 @@ bot.set_my_commands(commands=[
   BotCommand("bard", "Art Prompt 🤖"),
   BotCommand("img", "Dalle Prompt 🎨 "),
   BotCommand("gpt", "Just send Prompt Without Slash 🤖"),
-  BotCommand("search", "Internet Access 🌐"),
+  # BotCommand("search", "Internet Access 🌐"),
 ])
 
 
@@ -82,53 +82,53 @@ Hello @%s ! 😊 How are you ?\n
 # #INTERNET
 
 
-@bot.message_handler(commands=['search'])
-def internet(message):
-  if message.chat.type in ['private', 'supergroup', 'group']:
-    bot.send_chat_action(message.chat.id, "typing")
-    username = message.from_user.username
-    print("@", username)
-    msg = bot.send_message(message.chat.id,
-                           "🌀 Processing...",
-                           reply_to_message_id=message.message_id)
+# @bot.message_handler(commands=['search'])
+# def internet(message):
+#   if message.chat.type in ['private', 'supergroup', 'group']:
+#     bot.send_chat_action(message.chat.id, "typing")
+#     username = message.from_user.username
+#     print("@", username)
+#     msg = bot.send_message(message.chat.id,
+#                            "🌀 Processing...",
+#                            reply_to_message_id=message.message_id)
 
-    prompt = message.text.replace('/search', '').strip()
+#     prompt = message.text.replace('/search', '').strip()
 
-    print(prompt)
+#     print(prompt)
 
-    search = DuckDuckGoSearchRun()
-    llm = ChatOpenAI()
+#     search = DuckDuckGoSearchRun()
+#     llm = ChatOpenAI()
 
-    memory = ConversationBufferMemory(memory_key="chat_history",
-                                      return_messages=True)
+#     memory = ConversationBufferMemory(memory_key="chat_history",
+#                                       return_messages=True)
 
-    tools = [
-      Tool(
-        name="Current Search",
-        func=search.run,
-        description=
-        "useful for when you need to answer questions about current events or the current state of the world"
-      ),
-    ]
-    agent_chain = initialize_agent(
-      tools,
-      llm,
-      agent="chat-conversational-react-description",
-      verbose=True,
-      handle_parsing_errors="Check your output and make sure it conforms!",
-      memory=memory)
+#     tools = [
+#       Tool(
+#         name="Current Search",
+#         func=search.run,
+#         description=
+#         "useful for when you need to answer questions about current events or the current state of the world"
+#       ),
+#     ]
+#     agent_chain = initialize_agent(
+#       tools,
+#       llm,
+#       agent="chat-conversational-react-description",
+#       verbose=True,
+#       handle_parsing_errors="Check your output and make sure it conforms!",
+#       memory=memory)
 
-    output = agent_chain.run(input=prompt)
+#     output = agent_chain.run(input=prompt)
 
-    splitted_text = util.smart_split(output, chars_per_string=3000)
-    for text in splitted_text:
-      bot.send_message(message.from_user.id, text, parse_mode='Markdown')
-    info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
-    bot.edit_message_text(
-      chat_id=message.chat.id,
-      message_id=msg.message_id,
-      text=info,
-    )
+#     splitted_text = util.smart_split(output, chars_per_string=3000)
+#     for text in splitted_text:
+#       bot.send_message(message.from_user.id, text, parse_mode='Markdown')
+#     info = """✅ Process Complete...\n\n @%s """ % message.from_user.username
+#     bot.edit_message_text(
+#       chat_id=message.chat.id,
+#       message_id=msg.message_id,
+#       text=info,
+#     )
 
 
 #DALLE IMG GEN
