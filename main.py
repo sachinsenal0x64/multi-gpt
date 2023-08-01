@@ -1,10 +1,10 @@
 import telebot
 from dotenv import load_dotenv, find_dotenv
 from telebot.types import BotCommand, InputMediaPhoto
-
 import concurrent.futures
 from flask import Flask, request
 import os
+import spacy
 from waitress import serve
 import requests
 import json
@@ -633,16 +633,16 @@ def cha_gpt_cus(message):
                                             ])  # Pass the user ID as a list
 
       # Build the reprompt with the specific user's conversation history
-      reprompt = " Your name is MULTI GPT.\n\nYou: {}\n\n"
+      reprompt = "Your name is MULTI GPT.\n\nYou: {}\n\n"
+
       for user_id, role, content in mems:
         reprompt += f"{role}: {content}\n"
 
-        # Check if there is no conversation history for the user
+      # Check if there is no conversation history for the user
       if len(mems) == 0:
         # If no history, start the conversation with a greeting or prompt
         reprompt = "Hello! How can I assist you today?\n\nYou: {}".format(
           user_question)
-
         rich.print(reprompt)
 
       url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
@@ -683,15 +683,7 @@ def cha_gpt_cus(message):
                             message_id=msg.message_id,
                             text=info)
 
-      output = response.json()['choices'][0]['message']['content']
-
-      # Append the GPT-3.5 response to the SQLite database along with the user ID
-      cursor.execute(
-        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'assistant', output))
-      conn.commit()
-
-      splitted_text = util.smart_split(output, chars_per_string=3000)
+      splitted_text = util.smart_split(out, chars_per_string=3000)
       for text in splitted_text:
         bot.send_message(message.from_user.id, text, parse_mode='Markdown')
       info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
