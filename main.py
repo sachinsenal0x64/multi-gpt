@@ -577,12 +577,13 @@ class UserModel(db.Model):
   assistant_response = db.Column(db.String)
 
 
-def get_user_conversation_history(user_id):
+def get_user_conversation_history(user_id, limit=5):
   with main.app_context():
-    # Query the database to retrieve conversation history for the specified user ID
-    row = UserModel.query.filter_by(user_id=user_id).all()
+    # Query the database to retrieve the last 20 conversation history for the specified user ID
+    rows = UserModel.query.filter_by(user_id=user_id).order_by(
+      UserModel.id.desc()).limit(limit).all()
 
-    return row
+    return rows
 
 
 # Define the handler for text messages
