@@ -99,7 +99,7 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 
 ## 🧾 CHAT CONVERSATION
 
-- 🛢 All Store in SQLITE Database
+- 🛢 All Store in [Sqlite3](https://docs.python.org/3/library/sqlite3.html) Database
 
 
 
