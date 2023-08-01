@@ -693,7 +693,7 @@ def cha_gpt_cus(message):
 
 
 functions = [
-  welcome, cha_gpt_cus, internet, art_bing, bard_chat, img,
+  welcome, cha_gpt_cus, art_bing, bard_chat, img,
   get_user_conversation_history
 ]
 
