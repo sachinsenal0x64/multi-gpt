@@ -81,7 +81,6 @@ Hello @%s ! 😊 How are you ?\n
 
 # #INTERNET
 
-
 # @bot.message_handler(commands=['search'])
 # def internet(message):
 #   if message.chat.type in ['private', 'supergroup', 'group']:
@@ -129,7 +128,6 @@ Hello @%s ! 😊 How are you ?\n
 #       message_id=msg.message_id,
 #       text=info,
 #     )
-
 
 #DALLE IMG GEN
 
@@ -596,11 +594,6 @@ def cha_gpt_cus(message):
       user_id = message.from_user.id  # Use user ID to identify users
       user_question = message.text
 
-      # Perform internet search using DuckDuckGo (or your custom class)
-      search = DuckDuckGoSearchRun(
-      )  # If you have a custom class for DuckDuckGo search
-      search_result = search.run(user_question)
-
       # Create or connect to the SQLite database
       conn = sqlite3.connect('conversation_history.db')
       cursor = conn.cursor()
@@ -620,6 +613,11 @@ def cha_gpt_cus(message):
         (user_id, 'user', user_question))
       conn.commit()
 
+      # Perform internet search using DuckDuckGo (or your custom class)
+      search = DuckDuckGoSearchRun(
+      )  # If you have a custom class for DuckDuckGo search
+      search_result = search.run(user_question)
+
       # Append the search result to the SQLite database along with the user ID
       cursor.execute(
         "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
@@ -633,17 +631,10 @@ def cha_gpt_cus(message):
                                             ])  # Pass the user ID as a list
 
       # Build the reprompt with the specific user's conversation history
-      reprompt = "Your name is MULTI GPT.\n\nYou: {}\n\n"
+      reprompt = "Your name is MULTI GPT. Your here to help with real time questions and have access to users personal infomations.\n\n"
 
       for user_id, role, content in mems:
-        reprompt += f"{role}: {content}\n"
-
-      # Check if there is no conversation history for the user
-      if len(mems) == 0:
-        # If no history, start the conversation with a greeting or prompt
-        reprompt = "Hello! How can I assist you today?\n\nYou: {}".format(
-          user_question)
-        rich.print(reprompt)
+        reprompt += f'''{role}\n\n{content}\n\n'''
 
       url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
 
@@ -693,8 +684,7 @@ def cha_gpt_cus(message):
 
 
 functions = [
-  welcome, cha_gpt_cus, art_bing, bard_chat, img,
-  get_user_conversation_history
+  welcome, cha_gpt_cus, art_bing, bard_chat, img, get_user_conversation_history
 ]
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
