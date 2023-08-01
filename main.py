@@ -579,7 +579,7 @@ class UserModel(db.Model):
 
 def get_user_conversation_history(user_id, limit=5):
   with main.app_context():
-    # Query the database to retrieve the last 20 conversation history for the specified user ID
+    # Query the database to retrieve the last 5 conversation history for the specified user ID
     rows = UserModel.query.filter_by(user_id=user_id).order_by(
       UserModel.id.desc()).limit(limit).all()
 
