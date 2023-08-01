@@ -638,7 +638,7 @@ def cha_gpt_cus(message):
 
           # Add each row's data to the reprompt
           reprompt.append(
-            f"\nUser Old Chat: {user_content}\nYour Old Chat: {your_output}\nInternet Data: {net}\n\n"
+            f"You are an assistant to a human, powered by a large language model trained by OpenAI.\n\nYou are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics.Whether the human needs help with a specific question or just wants to have a conversation about a particular topic, you are here to assist.\n\nUser Old Chat: {user_content}\nYour Old Chat: {your_output}\nInternet Data: {net}\n\n"
           )
 
         reprompt.append(f"User Current Chat: {user_question}")
