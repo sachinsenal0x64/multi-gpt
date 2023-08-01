@@ -577,7 +577,7 @@ class UserModel(db.Model):
   assistant_response = db.Column(db.String)
 
 
-def get_user_conversation_history(user_id, limit=10):
+def get_user_conversation_history(user_id, limit=25):
   with main.app_context():
     # Query the database to retrieve the last 10 conversation history for the specified user ID
     rows = UserModel.query.filter_by(user_id=user_id).order_by(
