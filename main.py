@@ -4,12 +4,11 @@ from telebot.types import BotCommand, InputMediaPhoto
 import concurrent.futures
 from flask import Flask, request
 import os
-import spacy
 from waitress import serve
 import requests
 import json
 import time
-import datetime
+from datetime import datetime
 import rich
 import random
 from typing import Dict
@@ -21,17 +20,20 @@ from io import BytesIO
 import re
 import string
 from telebot import util
-import sqlite3
-from langchain.agents import Tool
-from langchain.memory import ConversationBufferMemory
-from langchain.chat_models import ChatOpenAI
-from langchain.agents import initialize_agent
+from flask_sqlalchemy import SQLAlchemy
+
+# from langchain.agents import Tool
+# from langchain.memory import ConversationBufferMemory
+# from langchain.chat_models import ChatOpenAI
+# from langchain.agents import initialize_agent
 from langchain.tools import DuckDuckGoSearchRun
 
 main = Flask(__name__)
 
 load_dotenv(find_dotenv())
 
+main.config[
+  "SQLALCHEMY_DATABASE_URI"] = "sqlite:///conversation_history.sqlite"
 open_api = os.getenv("OPENAI_API_KEY")
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 host_url = os.getenv("HOST_URL")
@@ -40,6 +42,8 @@ cookie_1 = os.getenv("COOKIE_1")
 cookie_2 = os.getenv("COOKIE_2")
 
 bot = telebot.TeleBot(telegram_token)
+
+db = SQLAlchemy(main)
 
 start_time = time.time()
 
@@ -560,23 +564,25 @@ def bard_chat(message):
 
 block_words = ['/art', '/help', '/bard']
 
-# Define the function to get user conversation history from the SQLite database
+# Create a table to store conversation history if it doesn't exist
 
 
-def get_user_conversation_history(user_ids):
-  conn = sqlite3.connect('conversation_history.db')
-  cursor = conn.cursor()
+class UserModel(db.Model):
+  __tablename__ = "SERVER"
+  id = db.Column(db.Integer, primary_key=True)
+  user_id = db.Column(db.BIGINT)
+  role = db.Column(db.String)
+  user_content = db.Column(db.String)
+  internet = db.Column(db.String)
+  assistant_response = db.Column(db.String)
 
-  # Prepare the query with multiple user IDs using placeholders
-  query = "SELECT user_id, role, content FROM conversation WHERE user_id IN ({})".format(
-    ','.join('?' * len(user_ids)))
 
-  # Execute the query with the user IDs
-  cursor.execute(query, user_ids)
-  rows = cursor.fetchall()
+def get_user_conversation_history(user_id):
+  with main.app_context():
+    # Query the database to retrieve conversation history for the specified user ID
+    row = UserModel.query.filter_by(user_id=user_id).all()
 
-  conn.close()
-  return rows
+    return row
 
 
 # Define the handler for text messages
@@ -591,96 +597,100 @@ def cha_gpt_cus(message):
                              "🌀 Processing...",
                              reply_to_message_id=message.message_id)
 
-      user_id = message.from_user.id  # Use user ID to identify users
+      user_id = message.from_user.id
       user_question = message.text
 
-      # Create or connect to the SQLite database
-      conn = sqlite3.connect('conversation_history.db')
-      cursor = conn.cursor()
+      with main.app_context():
+        # Store the user's question in the database
+        user = UserModel(user_id=user_id,
+                         role="user",
+                         user_content=user_question)
 
-      # Create a table to store conversation history if it doesn't exist
-      cursor.execute('''CREATE TABLE IF NOT EXISTS conversation (
-                              id INTEGER PRIMARY KEY,
-                              user_id INTEGER,
-                              role TEXT,
-                              content TEXT
-                          )''')
-      conn.commit()
+        db.session.add(user)
+        db.session.commit()
 
-      # Append user input to the SQLite database along with the user ID
-      cursor.execute(
-        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'user', user_question))
-      conn.commit()
+        # Perform internet search using DuckDuckGo (or your custom class)
+        search = DuckDuckGoSearchRun()
+        search_result = search.run(user_question)
+        rich.print(search_result)
 
-      # Perform internet search using DuckDuckGo (or your custom class)
-      search = DuckDuckGoSearchRun(
-      )  # If you have a custom class for DuckDuckGo search
-      search_result = search.run(user_question)
+        # Store the internet search result in the database
+        internet = UserModel(user_id=user_id,
+                             role="internet",
+                             internet=search_result)
 
-      # Append the search result to the SQLite database along with the user ID
-      cursor.execute(
-        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'internet', search_result))
-      conn.commit()
+        db.session.add(internet)
+        db.session.commit()
 
-      rich.print(search_result)
+        # Retrieve all conversation history of the specific user from the SQLite database
+        mems = get_user_conversation_history(
+          user_id)  # Pass the user ID as a list
 
-      # Retrieve all conversation history of the specific user from the SQLite database
-      mems = get_user_conversation_history([user_id
-                                            ])  # Pass the user ID as a list
+        # Build the reprompt with the specific user's conversation history
+        reprompt = []
+        for row in mems:
+          rich.print(row)
+          role = row.role
+          user_ids = row.user_id
+          user_content = row.user_content
+          your_output = row.assistant_response
+          net = row.internet
 
-      # Build the reprompt with the specific user's conversation history
-      reprompt = "Your name is MULTI GPT. Your here to help with real time questions and have access to users personal infomations.\n\n"
+          # Add each row's data to the reprompt
+          reprompt.append(
+            f"\nUser Old Chat: {user_content}\nYour Old Chat: {your_output}\nInternet Data: {net}\n\n"
+          )
 
-      for user_id, role, content in mems:
-        reprompt += f'''{role}\n\n{content}\n\n'''
+        reprompt.append(f"User Current Chat: {user_question}")
+        reprompt_text = "\n".join(reprompt)
 
-      url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
+        url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
 
-      headers = {
-        "Authorization":
-        f"Bearer {open_api}",  # Replace with your GPT-3.5 API key
-        "Content-Type":
-        "application/json",
-        "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.82"
-      }
+        headers = {
+          "Authorization":
+          f"Bearer {open_api}",  # Replace with your GPT-3.5 API key
+          "Content-Type":
+          "application/json",
+          "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.82"
+        }
 
-      data = {
-        "model": "gpt-3.5-turbo-16k",
-        "messages": [
-          {
-            "role": "assistant",
-            "content": reprompt
-          },
-        ],
-      }
+        data = {
+          "model": "gpt-3.5-turbo-16k",
+          "messages": [
+            {
+              "role": "assistant",
+              "content": reprompt_text
+            },
+          ],
+        }
 
-      response = requests.post(url, headers=headers, json=data)
-      out = response.json()['choices'][0]['message']['content']
+        response = requests.post(url, headers=headers, json=data)
+        out = response.json()['choices'][0]['message']['content']
 
-      # Append the assistant's response to the SQLite database along with the user ID
-      cursor.execute(
-        "INSERT INTO conversation (user_id, role, content) VALUES (?, ?, ?)",
-        (user_id, 'assistant', out))
-      conn.commit()
+        # Append the assistant's response to the SQLite database along with the user ID
+        assistant = UserModel(user_id=user_id,
+                              role="assistant",
+                              assistant_response=out)
 
-      rich.print("\n" + out + "\n")
+        db.session.add(assistant)
+        db.session.commit()
 
-      info = "🟡 Processing..."
+        rich.print("\n" + out + "\n")
 
-      bot.edit_message_text(chat_id=message.chat.id,
-                            message_id=msg.message_id,
-                            text=info)
+        info = "🟡 Processing..."
 
-      splitted_text = util.smart_split(out, chars_per_string=3000)
-      for text in splitted_text:
-        bot.send_message(message.from_user.id, text, parse_mode='Markdown')
-      info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
-      bot.edit_message_text(chat_id=message.chat.id,
-                            message_id=msg.message_id,
-                            text=info)
+        bot.edit_message_text(chat_id=message.chat.id,
+                              message_id=msg.message_id,
+                              text=info)
+
+        splitted_text = util.smart_split(out, chars_per_string=3000)
+        for text in splitted_text:
+          bot.send_message(message.from_user.id, text, parse_mode='Markdown')
+        info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
+        bot.edit_message_text(chat_id=message.chat.id,
+                              message_id=msg.message_id,
+                              text=info)
 
 
 functions = [
@@ -691,6 +701,8 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
   results = executor.map(lambda func: func, functions)
 
 if __name__ == '__main__':
+  with main.app_context():
+    db.create_all()
   print('🟢 BOT IS ONLINE')
   bot.set_webhook(url=f'{host_url}/{telegram_token}')
   serve(main, host='0.0.0.0', port=int(os.environ.get('PORT', 6100)))
