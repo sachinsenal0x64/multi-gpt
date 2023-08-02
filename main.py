@@ -187,6 +187,11 @@ def img(message):
                         parse_mode='Markdown')
 
 
+FORWARDED_IP = (
+  f"13.{random.randint(104, 107)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
+)
+
+
 @bot.message_handler(commands=['art'])
 def art_bing(message):
   bot.send_chat_action(message.chat.id, "typing")
@@ -650,10 +655,10 @@ def cha_gpt_cus(message):
         headers = {
           "Authorization":
           f"Bearer {open_api}",  # Replace with your GPT-3.5 API key
-          "Content-Type":
-          "application/json",
+          "Content-Type": "application/json",
           "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.82"
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.82",
+          "x-forwarded-for": FORWARDED_IP
         }
 
         data = {
@@ -667,6 +672,9 @@ def cha_gpt_cus(message):
         }
 
         response = requests.post(url, headers=headers, json=data)
+
+        rich.print(response.headers)
+
         out = response.json()['choices'][0]['message']['content']
 
         # Append the assistant's response to the SQLite database along with the user ID
