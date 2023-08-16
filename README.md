@@ -97,15 +97,6 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 <br>
 
 
-## 🧾 CHAT CONVERSATION
-
-- 🛢 All Data Store in [Sqlite3](https://docs.python.org/3/library/sqlite3.html) Database
-
-
-
-<br>
-
-
 ## 💡 Pros
 
 - 🍕 You Can Use Without Any Offical API Keys
