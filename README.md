@@ -113,5 +113,3 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 
 
 <br>
- 
-## 🛠 Some Features are Still in Development :)
