@@ -154,13 +154,13 @@ def img(message):
 
   text = message.text.replace('/img', '').strip()
 
-  url = "https://chatgpt.hungchongki3984.workers.dev/v1/images/generations"
+  url = "https://api.openai.com/v1/images/generations"
 
   headers = {
     "Content-Type":
     "application/json",
     "Authorization":
-    f"Bearer ",
+    f"Bearer {open_api}",
     "User-Agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188"
   }
@@ -610,7 +610,7 @@ def cha_gpt_cus(message):
 
       #https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions
 
-      url = "https://chatgpt.hungchongki3984.workers.dev/v1/chat/completions"
+      url = "https://api.openai.com/v1/chat/completions"
 
       headers = {
         "Authorization":
