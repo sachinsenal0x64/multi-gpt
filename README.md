@@ -46,7 +46,7 @@ https://github.com/sachinsenal0x64/MULTI-GPT/assets/127573781/69ba009f-9097-48b0
 ## 🤖 TRY
 
 
-<a href="https://t.me/OPENAIX_BOT">
+<a href="https://t.me/testgptx_bot">
   <img alt="" src="https://img.shields.io/badge/Telegram-2CA5E0?style=badge&logo=telegram&logoColor=white" style="height: 30px; width: 120px;" /> 
 </a>
 
