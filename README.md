@@ -89,7 +89,7 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 
 - /bard 'prompt'
 
-- You can just send prompt to GPT
+- You can just send any prompt to GPT
 
 
 <br>
