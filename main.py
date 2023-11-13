@@ -40,6 +40,10 @@ host_url = os.getenv("HOST_URL")
 bard_token = os.getenv("BARD_TOKEN")
 cookie_1 = os.getenv("COOKIE_1")
 cookie_2 = os.getenv("COOKIE_2")
+user_ids = os.getenv("USER_ID")
+
+allowed_user_ids = list(map(int,user_ids.split(",")))
+
 
 bot = telebot.TeleBot(telegram_token)
 
@@ -146,45 +150,46 @@ def img(message):
                          reply_to_message_id=message.message_id)
 
   if message.text == '/img':
-    warn = f" Please Send Prompt : /img <PROMPT> "
-    bot.edit_message_text(chat_id=message.chat.id,
-                          message_id=msg.message_id,
-                          text=warn,
-                          parse_mode='Markdown')
+    if str(message.from_user.id) in allowed_user_ids:
+      warn = f" Please Send Prompt : /img <PROMPT> "
+      bot.edit_message_text(chat_id=message.chat.id,
+                            message_id=msg.message_id,
+                            text=warn,
+                            parse_mode='Markdown')
 
-  text = message.text.replace('/img', '').strip()
-
-  url = "https://api.openai.com/v1/images/generations"
-
-  headers = {
-    "Content-Type":
-    "application/json",
-    "Authorization":
-    f"Bearer {open_api}",
-    "User-Agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188"
-  }
-
-  data = {"prompt": f'{text}', "n": 4, "size": "1024x1024"}
-
-  res = requests.post(url, json=data, headers=headers)
-
-  image_urls = [item['url'] for item in res.json()['data']]
-
-  media_g = []
-
-  for url in image_urls:
-    cropped_media = InputMediaPhoto(media=url)
-    media_g.append(cropped_media)
-    rich.print(cropped_media)
-
-  bot.send_media_group(message.from_user.id, media_g)
-
-  info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
-  bot.edit_message_text(chat_id=message.chat.id,
-                        message_id=msg.message_id,
-                        text=info,
-                        parse_mode='Markdown')
+      text = message.text.replace('/img', '').strip()
+    
+      url = "https://api.openai.com/v1/images/generations"
+    
+      headers = {
+        "Content-Type":
+        "application/json",
+        "Authorization":
+        f"Bearer {open_api}",
+        "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188"
+      }
+    
+      data = {"prompt": f'{text}', "n": 4, "size": "1024x1024"}
+    
+      res = requests.post(url, json=data, headers=headers)
+    
+      image_urls = [item['url'] for item in res.json()['data']]
+    
+      media_g = []
+    
+      for url in image_urls:
+        cropped_media = InputMediaPhoto(media=url)
+        media_g.append(cropped_media)
+        rich.print(cropped_media)
+    
+      bot.send_media_group(message.from_user.id, media_g)
+    
+      info = """✅ Process Completed ...\n\n @%s """ % message.from_user.username
+      bot.edit_message_text(chat_id=message.chat.id,
+                            message_id=msg.message_id,
+                            text=info,
+                            parse_mode='Markdown')
 
 
 FORWARDED_IP = (
