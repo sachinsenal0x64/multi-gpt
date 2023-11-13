@@ -40,7 +40,7 @@ host_url = os.getenv("HOST_URL")
 bard_token = os.getenv("BARD_TOKEN")
 cookie_1 = os.getenv("COOKIE_1")
 cookie_2 = os.getenv("COOKIE_2")
-user_ids = os.getenv("USER_ID")
+user_ids = os.getenv("USER_IDS")
 
 allowed_user_ids = list(map(int,user_ids.split(",")))
 
