@@ -23,7 +23,7 @@ width="1800"  height="3">
 -  🔓 JAILBREAK MODES
 -  🎨 DALLE 2 
 -  🌟 BARD
--  🍪 MULTI ACCOUNT (For Speed Up)
+-  🍪 MULTI ACCOUNTS (For Speed Up)
 -  ⚡️ MULTI THREADING
 -  🤖 GPT 4 (⭕ in progress)
 -  🌐 INTERNET ACCESS
