@@ -83,13 +83,13 @@ The Fastest Way To Deploy The Multi-Gpt To `repl.it` remember in replit you can 
 
 ## 📕 USAGE 
 
-- /img <prompt>
+- /img 'prompt'
 
 - /start
 
-- /bard <prompt>
+- /bard 'prompt'
 
-- for gpt just send normal msg
+- You can just send prompt to GPT
 
 
 <br>
