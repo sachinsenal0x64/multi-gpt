@@ -6,14 +6,11 @@
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Handlee&center=true&vCenter=true&width=500&height=60&lines=This+is+multi+gpt+🚀+.)](https://git.io/typing-svg)
 
-<img src="https://cdn.jsdelivr.net/gh/sachinsenal0x64/PICX-IMAGE-HOSTING@master/ledstrip.3024rqxzahq0.gif"
-width="1800"  height="3">
-
 </div>
 
 <br>
 
-# 📡 MULTI-GPT-TELEGRAM-BOT (REVERSE-ENGINEERED-APIs)
+## 📡 MULTI-GPT-TELEGRAM-BOT (REVERSE-ENGINEERED-APIs)
 
 <br>
 
