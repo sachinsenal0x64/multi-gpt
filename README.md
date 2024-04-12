@@ -6,11 +6,15 @@
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Handlee&center=true&vCenter=true&width=500&height=60&lines=This+is+multi+gpt+🚀+.)](https://git.io/typing-svg)
 
+📡 MULTI-GPT-TELEGRAM-BOT (REVERSE-ENGINEERED-APIs)
 </div>
 
 <br>
 
-## 📡 MULTI-GPT-TELEGRAM-BOT (REVERSE-ENGINEERED-APIs)
+## 💕 Community
+
+> 🍻 Join the community:  <a href="https://discord.gg/EbfftZ5Dd4">Discord</a>
+> [![](https://cdn.statically.io/gh/sachinsenal0x64/picx-images-hosting@master/discord.72y8nlaw5mdc.webp)](https://discord.gg/EbfftZ5Dd4)
 
 <br>
 
