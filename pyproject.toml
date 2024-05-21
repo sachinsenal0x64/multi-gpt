@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-requests = "^2.31.0"
+requests = "^2.32.0"
 rich = "^13.4.2"
 telebot = "^0.0.5"
 waitress = "^2.1.2"
